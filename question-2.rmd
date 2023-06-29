@@ -68,7 +68,7 @@ model_gbm <- gbm(Diabetes_binary ~.,
                 cv.folds = 10,
                 shrinkage = .01,
                 n.minobsinnode = 10,
-                n.trees = 100/home/cafebazaar/R-Projects/diabet)
+                n.trees = 100)
 summary(model_gbm)
 
 
