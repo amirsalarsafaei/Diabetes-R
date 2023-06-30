@@ -6,7 +6,7 @@ output: html_document
 
 ### Importing libraries and setting paths
 ```{r}
-base_folder <- "/home/cafebazaar/R-Projects/diabet/" # change this:)
+base_folder <- "/home/amirsalar/Diabetes-R/" # change this:)
 
 data_folder <- paste0(base_folder, "data/")
 output_folder <- paste0(base_folder, "output/")
@@ -19,6 +19,7 @@ library(data.table)
 library(ggplot2)
 library(readxl)
 library(corrplot)
+library(forcats)
 ```
 ### Loading datasets
 ```{r}
@@ -48,29 +49,36 @@ Having this many categorical features and specially binary features confirms my 
 So lets use gradient boosting on decision trees and fit our data.
 We don't tune parameters because we only need feature importance.
 
-[//]: # (```{r})
 
-[//]: # (binary_columns <- c&#40;"HighBP"&#41;)
-
-[//]: # (for &#40;column_name in categorical_columns&#41; {)
-
-[//]: # (  dt_5050 <- dt_5050[, &#40;column_name&#41; := as.factor&#40;get&#40;column_name&#41;&#41;])
-
-[//]: # (})
-
-[//]: # (```)
 ```{r}
 library('gbm')
 
-model_gbm <- gbm(Diabetes_binary ~.,
+model.gbm <- gbm(
+                Diabetes_binary ~.,
                 data = dt_5050,
-                distribution = "multinomial",
-                cv.folds = 10,
+                distribution = "bernoulli",
                 shrinkage = .01,
                 n.minobsinnode = 10,
-                n.trees = 100)
-summary(model_gbm)
+                n.trees = 500,
+                interaction.depth = 2
+            )
 
 
 ```
 
+We choose the parameters based on insight and intuition in the next question we will see that we can use cross validation in order to choose best parameters.
+I used
+```{r}
+
+model.feature_importance <- summary(model.gbm, plotit = FALSE)
+
+ggplot(model.feature_importance, aes(rel.inf, forcats::fct_reorder(var, rel.inf))) +
+  geom_col(fill="deepskyblue") +
+  labs(title="Feature importance", x="Relative influence", y="Feature name")
+```
+
+
+We can see that we general Health, High Blood pressure, BMI, Age and High cholesterol are the main predictors for our prediction model,
+they have the most influence (relative) meaning that if we calculate every predictors loss reduction separately on each tree and average it which predictor results in more loss reduction!
+
+*(in question 3 we used random forest feature importance too)*

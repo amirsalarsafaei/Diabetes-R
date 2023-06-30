@@ -8,7 +8,7 @@ output: html_document
 First Lets see what data says about unrelated variable(to be predicted variable).
 
 ```{r}
-base_folder <- "/home/cafebazaar/R-Projects/diabet/" # change this:)
+base_folder <- "/home/amirsalar/Diabetes-R/" # change this:)
 data_folder <- paste0(base_folder, "data/")
 output_folder <- paste0(base_folder, "output/")
 
@@ -56,12 +56,18 @@ Is more shifted to right meaning people with diabetes have worse general health 
 
 ### High Blood Pressure
 
-![General High Blood Pressure](output/High-Blood-Pressure-distribution.png)
+![High Blood Pressure](output/High-Blood-Pressure-distribution.png)
 
 
 Having High blood pressure is a good indicator for diabetes people with high blood pressure are more likely to have diabetes!
 
+### Age
 
+
+![Age](output/age-distribution.png)
+
+
+older people are more likely to have diabetes!
 
 # Conclusion
 
