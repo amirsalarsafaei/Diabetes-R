@@ -1,5 +1,5 @@
 gridExtra---
-title: "R Notebook"
+title: "Question 3 & 4"
 output: html_document
 ---
 ```{r}
@@ -32,10 +32,12 @@ dt_5050 <- dt_5050[, Diabetes_binary := as.factor(Diabetes_binary)]
 dt <- dt[, Diabetes_binary := as.factor(Diabetes_binary)]
 ```
 
-# Question 2 answer
+# Question 3 & 4 answers
 
 Yes we can. We can use different predictor subset selection methods and use cross validation in order to find best feature subset.
 Because Random forests have fewer parameters to tune and are more popular compared to gbms libraries and functions are supported better, So will be continuing with them.
+
+and for question 4 we will be evaluating our model using binary imbalance dataset and different metrics.
 
 ## Intro
 
@@ -167,7 +169,7 @@ optVars <- c("GenHlth", "BMI","HighBP","Age","HighChol")
 ```
 
 ```{r}
-cl <- makePSOCKcluster(5)
+cl <- makePSOCKcluster(3)
 registerDoParallel(cl)
 
 
@@ -182,7 +184,7 @@ fitControl <- trainControl(## 10-fold CV
 dt_5050_optVars <- dt_5050[, c("Diabetes_binary", optVars), with=FALSE]
 dt_optVars <- dt[, c("Diabetes_binary", optVars), with=FALSE]
 
-random_indices <- sample(seq_len(nrow(dt_5050_optVars)), size = 35000, replace = FALSE)
+random_indices <- sample(seq_len(nrow(dt_5050_optVars)), size = 45000, replace = FALSE)
 smallerDT <- dt_5050_optVars[random_indices]
 
 levels(smallerDT$Diabetes_binary) <- make.names(levels(smallerDT$Diabetes_binary), unique = TRUE)
