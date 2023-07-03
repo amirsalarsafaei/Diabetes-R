@@ -1,0 +1,22 @@
+---
+title: "Extra info"
+output: html_document
+---
+
+## Variable selection method
+
+We used caret package for variable selection it used backward selection method which we were taught in the class
+
+## Hyper-Parameter Search
+
+We used grid search method meaning we created a grid of different parameter values and did a search to find the optimum parameters
+
+## Question 5
+
+We forgot to mention that even though we made our model smaller in order to compute it on a browser we need to fit the model first and then send the fited model to user!
+
+also there is way in which you can make a random forest with large number of trees and choose the ones with lower out of the bag error
+
+## Libraries
+
+I researched a lot of libraries for this problem and found cool tools :) They are a little tricky to install. beware!
