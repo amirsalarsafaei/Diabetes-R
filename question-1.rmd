@@ -1,11 +1,12 @@
 ---
-title: "ساخت نمودار های سوال ۱"
+title: "eda final"
 output: html_document
 ---
-# **توجه** این فایل صرفا ساخت نمودار ها می باشد و توضیحات در فایل بررسی **eda-final** آمده است.
 
+# Intro
 
-### Importing libraries and setting paths
+First Lets see what data says about unrelated variable(to be predicted variable).
+
 ```{r}
 base_folder <- "/home/amirsalar/Diabetes-R/" # change this:)
 
@@ -20,50 +21,79 @@ library(data.table)
 library(ggplot2)
 library(readxl)
 library(corrplot)
-```
-### Loading datasets
-```{r}
+library(forcats)
+library(gbm)
+library(caret)
+library(doParallel)
+library(randomForest)
+library(pROC)
+library(verification)
+
 dt_012 <- data.table(read.csv(diabetes_012_path))
 dt_5050 <- data.table(read.csv(diabetes_binary_5050_path))
 dt <- data.table(read.csv(diabetes_binary_path))
+
+dt_5050 <- dt_5050[, Diabetes_binary := as.factor(Diabetes_binary)]
+dt <- dt[, Diabetes_binary := as.factor(Diabetes_binary)]
 ```
 
+## Data
 
-### Lets See data and test hypothesises
-```{r}
-corr <- cor(dt_5050)
-corrplot(corr, addCoef.col = 1)
-```
-
-
+Let's have a look at data summery to see what we got!
 
 ```{r}
-ggplot(dt_5050, aes(BMI, fill = Diabetes_binary))+
-  geom_density(alpha = .70)+
-  scale_fill_discrete(labels=c('No Diabetes', 'Has Diabetes'))
-
-ggsave(filename = paste0(output_folder, "BMI-distribution.png"), width = 800, height = 600, units = "px", dpi = 100)
+summary(dt_5050)
 ```
+
+
+### Lets see our data distribution in imbalance data.table
+
 ```{r}
-ggplot(dt_5050, aes(GenHlth, fill = Diabetes_binary))+
-  geom_bar(alpha = .75)+
-  facet_wrap(Diabetes_binary ~ ., scales = 'free_y')+
-  scale_fill_discrete(labels=c( 'No Diabetes', 'Diabetes'))
-
-ggsave(filename = paste0(output_folder, "General-health-distribution.png"), width = 1000, height = 750, units = "px", dpi = 100)
+ggplot(dt) +
+  geom_bar(aes(x= Diabetes_binary, y = (..count..)/sum(..count..)), alpha = .75) +
+  scale_fill_discrete(labels=c('No Diabetes', 'Diabetes'))+
+  labs(title="Real world diabetes vs no-diabetes percent", x="Diabetes Binary", y="Percent of people")
 ```
-```{r}
-ggplot(dt_5050, aes(HighBP, fill = Diabetes_binary))+
-  geom_bar( alpha = .75)+
-  facet_wrap(Diabetes_binary ~ ., scales = 'free_y')+
-  scale_fill_discrete(labels=c('No Diabetes', 'Diabetes'))
 
-ggsave(filename = paste0(output_folder, "High-Blood-Pressure-distribution.png"), width = 1000, height = 750, units = "px", dpi = 100)
-```
-```{r}
-ggplot(dt_5050, aes(Age, fill = Diabetes_binary))+
-  geom_boxplot() +
-  scale_fill_discrete(labels=c('No Diabetes', 'Diabetes'))
-ggsave(filename = paste0(output_folder, "age-distribution.png"), width = 1000, height = 750, units = "px", dpi = 100)
 
-```
+in Question 2 till 5 we will use 50-50 data for model training this is due to the fact that only 12.5 percent of population have diabetes and our model will over fit on no-diabetes, but we want our model to have high precision (We discuss this briefly in incoming questions) but we will use real world data for test validation
+
+## Correlation
+To get some info and intuition about features we get correlation matrix of data to understand and analyse it.
+
+![Correlation Matrix](output/cor-matrix.png)
+
+We can see that some features have good correlation with diabetes binary. So we can explore more to find out more about our features and data.
+
+## Feature Distribution diabetes vs no-diabetes
+
+### BMI
+![BMI Distributions](output/BMI-distribution.png)
+
+
+As we can see people with higher BMI are more likely to have Diabetes.We can use this feature to predict whether someone has diabetes or not.
+
+### General Health
+![General Health Distributions](output/General-health-distribution.png)
+
+
+Is more shifted to right meaning people with diabetes have worse general health condition than others. people who answered they have poor health have a strong indication of diabetes. For example if we classify based on category 4,5 our accuracy can be good but this is a simple model with more complex models and more tuning we can predict the answer.
+
+### High Blood Pressure
+
+![High Blood Pressure](output/High-Blood-Pressure-distribution.png)
+
+
+Having High blood pressure is a good indicator for diabetes people with high blood pressure are more likely to have diabetes!
+
+### Age
+
+
+![Age](output/age-distribution.png)
+
+
+older people are more likely to have diabetes!
+
+# Conclusion
+
+We can clearly see that this data can say a lot about the to be predicted variable(diabetes binary). We showed 3 great predictors so there is good reason to believe we can have a nice enough prediction using this data.
